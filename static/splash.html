@@ -1,0 +1,114 @@
+<div class="box flex">
+	<img src="/static/logo.png" />
+</div>
+<div class="progress-line"></div>
+
+<style>
+	.progress-line {
+		-webkit-animation: fadein 1s;
+	}
+
+	@-webkit-keyframes fadein {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+	@keyframes rubberBand {
+		from {
+			transform: scale3d(1, 1, 1);
+		}
+
+		30% {
+			transform: scale3d(1.25, 0.75, 1);
+		}
+
+		40% {
+			transform: scale3d(0.75, 1.25, 1);
+		}
+
+		50% {
+			transform: scale3d(1.15, 0.85, 1);
+		}
+
+		65% {
+			transform: scale3d(0.95, 1.05, 1);
+		}
+
+		75% {
+			transform: scale3d(1.05, 0.95, 1);
+		}
+
+		to {
+			transform: scale3d(1, 1, 1);
+		}
+	}
+
+	.progress-line,
+	.progress-line:before {
+		height: 3px;
+		width: 100%;
+		margin: 0;
+	}
+
+	.progress-line {
+		background-color: #b3d4fc;
+		display: -webkit-flex;
+		display: flex;
+	}
+	.progress-line:before {
+		background-color: #3f51b5;
+		content: '';
+		-webkit-animation: running-progress 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+		animation: running-progress 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+	}
+	@-webkit-keyframes running-progress {
+		0% {
+			margin-left: 0px;
+			margin-right: 100%;
+		}
+		50% {
+			margin-left: 25%;
+			margin-right: 0%;
+		}
+		100% {
+			margin-left: 100%;
+			margin-right: 0;
+		}
+	}
+	@keyframes running-progress {
+		0% {
+			margin-left: 0px;
+			margin-right: 100%;
+		}
+		50% {
+			margin-left: 25%;
+			margin-right: 0%;
+		}
+		100% {
+			margin-left: 100%;
+			margin-right: 0;
+		}
+	}
+
+	img {
+		animation-name: rubberBand;
+		animation-duration: 1s;
+		animation-fill-mode: both;
+		animation-iteration-count: 1;
+	}
+
+	.box.flex {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.box {
+		padding: 0.5rem;
+		height: 300px;
+	}
+</style>
