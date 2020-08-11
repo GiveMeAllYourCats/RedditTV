@@ -44,6 +44,7 @@ const isMp4 = link => {
 
 export default {
   name: 'Media',
+  props: ['items', 'last'],
   data: () => {
     return {
       type: '',
@@ -59,6 +60,7 @@ export default {
   computed: {},
   methods: {
     play(link) {
+      console.log('PLAY?', this.items, this.last)
       // youtube check
       const youtube = isYoutube(link)
       if (youtube) {

@@ -8,9 +8,6 @@
 				<b-navbar-item>
 					<b-navbar-item tag="router-link" :to="{ name: 'search' }">Search</b-navbar-item>
 				</b-navbar-item>
-				<b-navbar-item>
-					<b-navbar-item tag="router-link" :to="{ name: 'media' }">Watch</b-navbar-item>
-				</b-navbar-item>
 				<b-navbar-dropdown label="Saved">
 					<b-navbar-item tag="router-link" :to="{ name: 'subreddit', params: { name: 'holdmyfeedingtube' } }">/r/holdmyfeedingtube</b-navbar-item>
 				</b-navbar-dropdown>
@@ -20,6 +17,7 @@
 		<transition name="fade" mode="out-in" appear>
 			<router-view></router-view>
 		</transition>
+		<vue-progress-bar></vue-progress-bar>
 	</div>
 </template>
 
@@ -27,6 +25,7 @@
 export default {
 	name: 'reddittv',
 	mounted() {},
+	created() {},
 	methods: {}
 }
 </script>

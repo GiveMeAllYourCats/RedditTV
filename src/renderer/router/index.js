@@ -23,7 +23,8 @@ export default new Router({
     {
       path: '/media',
       name: 'media',
-      component: require('@/components/Media').default
+      component: require('@/components/Media').default,
+      props: true
     },
     {
       path: '/search',

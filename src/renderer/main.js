@@ -11,6 +11,24 @@ Vue.config.productionTip = false
 // ELECTRON SETTINGS
 import settings from 'electron-settings'
 
+// PROGRESS BAR
+import VueProgressBar from 'vue-progressbar'
+const options = {
+	color: 'rgb(143, 255, 199)',
+	failedColor: 'red',
+	thickness: '3px',
+	transition: {
+		speed: '0.2s',
+		opacity: '0.6s',
+		termination: 1
+	},
+	autoRevert: false,
+	autoFinish: false,
+	location: 'top',
+	inverse: false
+}
+Vue.use(VueProgressBar, options)
+
 // GLOBAL VARS
 Vue.prototype.$global = {}
 Vue.prototype.$settings = settings
@@ -18,6 +36,11 @@ Vue.prototype.$_ = require('lodash')
 
 // BULMA
 import 'bulma/css/bulma.css'
+
+// LOADING COMPONENT
+import Loading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/vue-loading.css'
+Vue.use(Loading)
 
 // BUEFY
 import Buefy from 'buefy'
@@ -41,9 +64,18 @@ new customTitlebar.Titlebar({
 })
 
 // AXIOS
-Vue.http = Vue.prototype.$http = axios
+const instance = axios.create()
+instance.interceptors.request.use(config => {
+	Vue.prototype.$Progress.start() // for every request start the progress
+	return config
+})
+instance.interceptors.response.use(response => {
+	Vue.prototype.$Progress.finish() // finish when a response is received
+	return response
+})
+Vue.http = Vue.prototype.$http = instance
 
-// SNOOWRAP
+// REDDIT PLUGIN
 import reddit from './modules/reddit'
 Vue.prototype.$reddit = reddit.reddit
 
@@ -67,6 +99,13 @@ router.beforeEach(async (to, from, next) => {
 		return next(action)
 	}
 	next()
+})
+router.beforeEach((to, from, next) => {
+	Vue.prototype.$Progress.start()
+	next()
+})
+router.afterEach((to, from) => {
+	Vue.prototype.$Progress.finish()
 })
 
 /* eslint-disable no-new */

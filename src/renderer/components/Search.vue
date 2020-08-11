@@ -6,24 +6,24 @@
           <b-autocomplete
             :data="data"
             placeholder="e.g. Videos"
-            field="title"
+            field="url"
             :loading="isFetching"
             @typing="getAsyncData"
             clearable
+            open-on-focus
             @select="option => (selected = option)"
-            v-on:select="klarpa"
             max-height="400px"
           >
             <template slot-scope="props">
               <div class="media">
                 <div class="media-left">
-                  <img width="32" :src="`https://image.tmdb.org/t/p/w500/${props.option.poster_path}`" />
+                  <img width="32" :src="props.option.icon_img" />
                 </div>
                 <div class="media-content">
-                  {{ props.option.title }}
+                  <b>{{ props.option.url }}</b> - {{ props.option.title }}
                   <br />
                   <small>
-                    Released at {{ props.option.release_date }}, rated <b>{{ props.option.vote_average }}</b>
+                    Created at <b>{{ props.option.created | moment('MM-DD-YYYY') }}</b>
                   </small>
                 </div>
               </div>
@@ -35,27 +35,14 @@
       <section>
         <transition name="fade">
           <div v-if="selected != null">
-            <button
-              tag="router-link"
-              :to="{ name: 'subreddit', params: { name: 'holdmyfeedingtube' } }"
-              class="button use-button is-fullwidth is-medium is-fullwidth"
-            >
-              <p class="animate__animated animate__fadeInLeft animate__infinite infinite">
-                <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-              </p>
-              Use '{{ selected.title }} '
-            </button>
-            <br />
-            <div v-if="loadingSubredditInfo">
-              <b-skeleton width="30%" :animated="true"></b-skeleton>
-              <b-skeleton width="50%" :animated="true"></b-skeleton>
-              <b-skeleton width="50%" :animated="true"></b-skeleton>
-              <b-skeleton width="50%" :animated="true"></b-skeleton>
-              <b-skeleton width="50%" :animated="true"></b-skeleton>
-            </div>
-            <div v-else>
-              :D
-            </div>
+            <router-link :to="{ name: 'subreddit', params: { name: selected.display_name } }">
+              <button class="animate__animated animate__bounceIn  button use-button is-success is-fullwidth is-medium is-fullwidth">
+                <p class="animate__animated animate__fadeInLeft animate__infinite infinite">
+                  <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                </p>
+                Generate Playlist for <b>{{ selected.url }}</b>
+              </button>
+            </router-link>
           </div>
         </transition>
       </section>
@@ -79,38 +66,10 @@ export default {
   },
   mounted() {},
   methods: {
-    async klarpa() {
-      this.loadingSubredditInfo = true
-      //
-      //       const r = require('./reddit')
-      //       await r
-      //         .getHot()
-      //         .map(post => post.title)
-      //         .then(console.log)
-
-      setTimeout(() => {
-        this.loadingSubredditInfo = false
-      }, 1000)
-    },
-    getAsyncData: debounce(function(name) {
-      if (!name.length) {
-        this.data = []
-        return
-      }
+    getAsyncData: debounce(async function(name) {
       this.isFetching = true
-      this.$http
-        .get(`https://api.themoviedb.org/3/search/movie?api_key=bb6f51bef07465653c3e553d6ab161a8&query=${name}`)
-        .then(({ data }) => {
-          this.data = []
-          data.results.forEach(item => this.data.push(item))
-        })
-        .catch(error => {
-          this.data = []
-          throw error
-        })
-        .then(() => {
-          this.isFetching = false
-        })
+      this.data = await this.$reddit.search(name)
+      this.isFetching = false
     }, 500)
   }
 }
@@ -118,6 +77,6 @@ export default {
 
 <style>
 .use-button {
-  margin-top: 20px;
+  margin-top: 25px;
 }
 </style>

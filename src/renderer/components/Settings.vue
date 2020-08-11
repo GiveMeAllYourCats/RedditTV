@@ -12,18 +12,8 @@ export default {
   data: () => {
     return {}
   },
-  mounted() {
-    this.start()
-  },
-  methods: {
-    async start() {
-      if (!(await this.$settings.get('firstStart'))) {
-        this.$toasted.show('Looks like this is your first time here, Welcome!').goAway(2500)
-
-        // console.log(this.$r.getSubmission('2np694').body)
-      }
-    }
-  }
+  mounted() {},
+  methods: {}
 }
 </script>
 
