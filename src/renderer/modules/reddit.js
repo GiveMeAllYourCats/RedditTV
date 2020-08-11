@@ -17,6 +17,8 @@ class Reddit {
 			actionText: 'OK',
 			duration: 4000
 		})
+		this.loader.hide()
+		Vue.prototype.$Progress.finish()
 		throw message
 	}
 
@@ -43,23 +45,18 @@ class Reddit {
 		return response.data
 	}
 
-	processItem(data) {
-		console.log('PROC', data.title, { data })
-		return data
-	}
-
 	async seek(subreddit, last) {
 		this.seekObj = {}
 		this.seekObj.shuffle = this.shuffle
 		this.seekObj.last = last
 		this.seekObj.items = []
 		this.seekObj.next = async () => {
-			this.seekObj.items.push(...(await this.getSubredditContent(subreddit, 5, true, this.seekObj.last)))
+			this.seekObj.items.push(...(await this.getSubredditContent(subreddit, 1, true, this.seekObj.last)))
 			this.seekObj.last = this.seekObj.items[this.seekObj.items.length - 1].name
 		}
 
 		if (!last) {
-			this.seekObj.items = await this.getSubredditContent(subreddit, 5, true)
+			this.seekObj.items = await this.getSubredditContent(subreddit, 1, true)
 			this.seekObj.last = this.seekObj.items[this.seekObj.items.length - 1].name
 		} else {
 			await this.seekObj.next()
@@ -69,7 +66,7 @@ class Reddit {
 	}
 
 	async getSubredditContent(subreddit, amount = 1, doShuffle = false, after) {
-		const loader = Vue.prototype.$loading.show()
+		this.loader = Vue.prototype.$loading.show()
 		let content = await new Promise(async (resolve, reject) => {
 			let count = 0
 			const returnVal = []
@@ -81,7 +78,7 @@ class Reddit {
 				}
 				const res = await this.get(url)
 				const items = res.data.children.map(item => {
-					return this.processItem(item.data)
+					return item.data
 				})
 				if (items.length >= 1) {
 					after = items[items.length - 1].name
@@ -90,11 +87,11 @@ class Reddit {
 				if (count === amount) {
 					return resolve(returnVal)
 				} else {
-					setTimeout(next, 200)
+					next()
 				}
 			}, this.error)
 		})
-		loader.hide()
+		this.loader.hide()
 
 		if (doShuffle) {
 			content = this.shuffle(content)

@@ -8,6 +8,9 @@ import store from './store'
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.config.productionTip = false
 
+// VUE MARKDOWN
+import VueMarkdown from 'vue-markdown'
+
 // ELECTRON SETTINGS
 import settings from 'electron-settings'
 
@@ -33,6 +36,8 @@ Vue.use(VueProgressBar, options)
 Vue.prototype.$global = {}
 Vue.prototype.$settings = settings
 Vue.prototype.$_ = require('lodash')
+Vue.prototype.$mime = require('mime-types')
+Vue.prototype.$shuffle = require('fisher-yates')
 
 // BULMA
 import 'bulma/css/bulma.css'
@@ -81,7 +86,17 @@ Vue.prototype.$reddit = reddit.reddit
 
 // TOASTED
 import Toasted from 'vue-toasted'
-Vue.use(Toasted)
+Vue.use(Toasted, {
+	action: {
+		icon: 'times-circle',
+		onClick: (e, toastObject) => {
+			toastObject.goAway(0)
+		}
+	},
+	keepOnHover: true,
+	duration: 3000,
+	iconPack: 'fontawesome'
+})
 
 // CORE-VIDEO
 import VueCoreVideoPlayer from 'vue-core-video-player'
@@ -110,7 +125,7 @@ router.afterEach((to, from) => {
 
 /* eslint-disable no-new */
 new Vue({
-	components: { App },
+	components: { App, VueMarkdown },
 	router,
 	store,
 	template: '<App/>'

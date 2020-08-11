@@ -10,9 +10,9 @@
               <p class="animate__animated animate__fadeInLeft animate__infinite infinite">
                 <i class="fa fa-angle-double-right" aria-hidden="true"></i>
               </p>
-              Play {{ items.length }} media items
+              Play
             </button>
-            <button @click="seekNext" class="button is-info">Generate More</button>
+            <button @click="seekNext" class="button is-info">Add More</button>
           </div>
           <div class="column has-text-right">Total items: {{ items.length }}</div>
         </div>
@@ -47,7 +47,8 @@ export default {
     },
     async seekNext() {
       const seek = await this.$reddit.seek(this.$route.params.name, this.last)
-      this.items = seek.shuffle(seek.items)
+      this.items.push(...seek.items)
+      this.items = this.$shuffle(this.items)
       this.last = seek.last
     },
     async start() {
